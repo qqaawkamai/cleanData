@@ -15,9 +15,9 @@ data_set <- rbind(cbind(sub_train, y_train, x_train), cbind(sub_test, y_test, x_
 
 ## extract features that are mean() or std() + Activity Code and Subject
 ## give columns appropriate names
-features <- read.table("features.txt")
-mean_std_cols <- grep(".*mean\\(\\).*|.*std\\(\\).*", features$V2) + 2
-colNums <- append(c(1,2), mean_std_cols)
+features <- read.table("./UCI HAR Dataset/features.txt")
+mean_std_cols <- grep(".*mean\\(\\).*|.*std\\(\\).*", features$V2)
+colNums <- append(c(1,2), mean_std_cols + 2)
 colNames <- append(c("subject","activity_code"), 
                    as.character(features[mean_std_cols,2]))
 
@@ -28,7 +28,7 @@ data_set <- data_set[ ,colNums]
 names(data_set) <- colNames
 
 ## merge activity_names with data_set
-activity_labels <- read.table("activity_labels.txt")
+activity_labels <- read.table("./UCI HAR Dataset/activity_labels.txt")
 data_set$activity <- activity_labels[data_set$activity_code,2]
 
 ## rearrange columns so activity is beside activity_code
@@ -40,5 +40,4 @@ data_set <- data_set[,c(1:2,69,3:68)]
 library(reshape2)
 dataMelt <- melt(data_set, id=c("subject", "activity"))
 tidyData <- dcast(dataMelt, subject + activity ~ variable, mean)
-write.csv(tidyData, "meansDataSet.csv")
 write.table(tidyData, "meansDataSet.txt", sep="\t")
